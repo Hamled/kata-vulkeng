@@ -7,3 +7,6 @@ edition = "2024"
 anyhow = "1.0"
 log = "0.4"
 pretty_env_logger = "0.5"
+
+[build-dependencies]
+pkg-config = "0.3"
