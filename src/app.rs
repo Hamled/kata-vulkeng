@@ -1,5 +1,7 @@
+use crate::engine::Engine;
+
 use anyhow::Result;
-use log::{error, info};
+use log::{debug, error, info};
 use winit::application::ApplicationHandler;
 use winit::dpi::PhysicalSize;
 use winit::event_loop::{ActiveEventLoop, EventLoop};
@@ -16,6 +18,7 @@ enum UserEvent {
 #[derive(Default)]
 struct App {
     window: Option<Window>,
+    engine: Option<Engine>,
 }
 
 impl ApplicationHandler<UserEvent> for App {
@@ -24,13 +27,31 @@ impl ApplicationHandler<UserEvent> for App {
             .with_title("vulkeng")
             .with_inner_size(INITIAL_SIZE);
 
-        match event_loop.create_window(window_attributes) {
-            Ok(window) => self.window = Some(window),
+        let window = match event_loop.create_window(window_attributes) {
+            Ok(window) => window,
             Err(e) => {
                 error!("Could not create window: {}", e);
                 event_loop.exit();
+                return;
             }
-        }
+        };
+        debug!(
+            "Created window with size {}x{}",
+            window.inner_size().width,
+            window.inner_size().height
+        );
+
+        let engine = match Engine::new(&window) {
+            Ok(engine) => engine,
+            Err(e) => {
+                error!("Could not create engine: {}", e);
+                event_loop.exit();
+                return;
+            }
+        };
+
+        self.window = Some(window);
+        self.engine = Some(engine);
     }
 
     fn window_event(
