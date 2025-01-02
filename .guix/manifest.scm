@@ -2,6 +2,7 @@
  (gnu packages freedesktop)
  (gnu packages llvm)
  (gnu packages pkg-config)
+ (gnu packages vulkan)
  (gnu packages xdisorg)
  (rustup build toolchain))
 
@@ -11,4 +12,7 @@
 		     pkg-config
 
 		     libxkbcommon
-		     wayland))
+		     wayland
+
+		     vulkan-loader
+		     vulkan-validationlayers))
