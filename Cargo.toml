@@ -5,6 +5,7 @@ edition = "2024"
 
 [dependencies]
 anyhow = "1.0"
+ctrlc = "3.4"
 log = "0.4"
 pretty_env_logger = "0.5"
 winit = { version = "0.30", default-features = false, features = ["wayland"] }
