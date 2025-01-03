@@ -4,6 +4,7 @@ use anyhow::Result;
 use log::{debug, error, info};
 use winit::application::ApplicationHandler;
 use winit::dpi::PhysicalSize;
+use winit::event::WindowEvent;
 use winit::event_loop::{ActiveEventLoop, EventLoop};
 use winit::platform::wayland::EventLoopBuilderExtWayland;
 use winit::window::Window;
@@ -19,6 +20,13 @@ enum UserEvent {
 struct App {
     window: Option<Window>,
     engine: Option<Engine>,
+}
+
+impl App {
+    fn should_draw(window: &Window) -> bool {
+        let size = window.inner_size();
+        size.width == 0 && size.height == 0
+    }
 }
 
 impl ApplicationHandler<UserEvent> for App {
@@ -56,10 +64,41 @@ impl ApplicationHandler<UserEvent> for App {
 
     fn window_event(
         &mut self,
-        _event_loop: &ActiveEventLoop,
+        event_loop: &ActiveEventLoop,
         _window_id: winit::window::WindowId,
-        _event: winit::event::WindowEvent,
+        event: winit::event::WindowEvent,
     ) {
+        let window = self
+            .window
+            .as_ref()
+            .expect("Got WindowEvent without window");
+        let engine = self
+            .engine
+            .as_mut()
+            .expect("Got WindowEvent without engine");
+
+        match event {
+            WindowEvent::RedrawRequested if !event_loop.exiting() && App::should_draw(window) => {
+                match engine.render(window.inner_size()) {
+                    Ok(()) => {}
+                    Err(e) => {
+                        error!("Rendering error: {}", e);
+                        event_loop.exit();
+                    }
+                }
+            }
+            WindowEvent::CloseRequested => {
+                event_loop.exit();
+
+                match engine.destroy() {
+                    Ok(()) => {}
+                    Err(e) => {
+                        error!("Error destroying engine: {}", e);
+                    }
+                }
+            }
+            _ => {}
+        }
     }
 
     fn user_event(&mut self, event_loop: &ActiveEventLoop, event: UserEvent) {
