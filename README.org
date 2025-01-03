@@ -1,1 +1,34 @@
-* Vulkan engine coding kata
+* Vulkan Graphics Engine Coding Kata
+This repository is designed to be used for a series of [[http://codekata.com/][coding katas]] that involve writing a [[https://www.vulkan.org/][Vulkan]] graphics engine using [[https://www.rust-lang.org/][Rust]] using the [[https://github.com/rust-windowing/winit][winit]] and [[https://github.com/ash-rs/ash][ash]] libraries.
+
+Creating a graphics engine of any kind, including with Vulkan, is significantly more complex than the average coding kata and is not well suited for daily pratice. Instead, this repository splits the process up into multiple katas that are designed to build ontop of each other.
+Practice with these Katas can be done in any way, but one suggested approach is to repeatedly practice the first kata until you feel satisfied with that effort and then move on to the second kata, using the last iteration as the basis for repeated practice of the kata, and so on to progress through the entire series.
+
+While these katas can be helpful for learning Rust, Vulkan, graphics programming in general and other skills, because of the complexity it is recommended to have some experience with these first by following guided tutorials (or whatever learning process works for you), so that the goals of each kata are well understood.
+
+** Katas
+The ~baseline~ tag has the initial starting point for Kata 1. It creates an event loop and window using winit (in [[file:./src/app.rs][app.rs]]), and allows the engine code to be filled in for initialization, rendering, and resource destruction (in [[file:./src/engine.rs][engine.rs]]). Baselines for later katas in the series should be taken from 
+
+*** Kata 1 - Setup
+Create devices, swapchain, pipeline, and framebuffers.
+
+** Preparation
+Currently this code only works with Linux systems using Wayland.
+
+*** Prerequisites
+**** Guix
+If using [[https://direnv.net][direnv]], allow the ~.envrc~ file. Otherwise enter the development shell with:
+#+BEGIN_SRC shell
+  guix time-machine -C .guix/channels.scm -- shell -m .guix/manifest.scm
+#+END_SRC
+
+**** Other package managers
+1. Use [[https://rustup.rs][rustup]] to install the Rust toolchain specified in [[file:./rust-toolchain.toml][rust-toolchain.toml]].
+2. Install C compiler toolchain (e.g. ~build-essential~ on Debian) and [[https://www.freedesktop.org/wiki/Software/pkg-config/][pkg-config]].
+3. Install libraries for [[https://wayland.freedesktop.org/][Wayland]] and [[https://xkbcommon.org/][xkbcommon]].
+4. Install the [[https://github.com/KhronosGroup/Vulkan-Loader][Vulkan loader]] and [[https://github.com/KhronosGroup/Vulkan-ValidationLayers][validation layers]]. Installing the [[https://www.lunarg.com/vulkan-sdk/][Vulkan SDK]] is probably the simplest way to get started.      
+
+*** Building
+Follow standard Rust development process, using ~cargo build~ and ~cargo run~.
+
+NOTE: The wayland and vulkan libraries are loaded dynamically during startup, rather than at runtime, so the executable will not gracefully fail if run on a system without these libraries.
